@@ -27,7 +27,9 @@ async function callAIWithRetry(apiCallFunc: () => Promise<any>, maxRetries = 3) 
       }
       
       const delayMs = attempt * 2000; // 2s, 4s, 6s...
-      console.log(`[AI Retry ${attempt}/${maxRetries}] Failed with ${error?.statusCode || 'timeout'}. Retrying in ${delayMs}ms...`);
+      console.error(`🚨 [AI Retry ${attempt}/${maxRetries}] Failed with ${error?.statusCode || error?.status || error?.name || 'timeout'}.`);
+      console.error(`🚨 [Full Error Object]:`, JSON.stringify(error, null, 2));
+      console.error(`🚨 Retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   }
@@ -678,7 +680,8 @@ export async function POST(request: NextRequest) {
               const cleanJson = analysisText.substring(jsonStart, jsonEnd + 1);
               analysis = JSON.parse(cleanJson)
             } catch (error) {
-              console.log("Analysis error", error);
+              console.error("🚨 [AI ANALYSIS ERROR]: Failed to parse Claude JSON output", error);
+              console.error("🚨 [RAW TEXT OUTPUT FROM AI]:", analysisText);
               throw new Error("Failed to parse json output");
             }
 
@@ -707,8 +710,12 @@ export async function POST(request: NextRequest) {
               checkAbort,
             });
           }
-        } catch (error) {
-          console.log(error)
+        } catch (error: any) {
+          console.error("🚨 [FATAL ROUTE ERROR]: The generation request failed.");
+          console.error("🚨 [ERROR NAME]:", error?.name);
+          console.error("🚨 [ERROR MESSAGE]:", error?.message);
+          console.error("🚨 [ERROR STACK]:", error?.stack);
+
           if (error instanceof AbortError) {
             if (genCardEmitted) {
               emit(writer, "generation", { status: "canceled" }, {
