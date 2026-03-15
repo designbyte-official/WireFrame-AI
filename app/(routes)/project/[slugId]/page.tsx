@@ -9,7 +9,9 @@ const Page = async ({ params }: {
   const { slugId } = await params;
   const { user } = await getAuthServer();
 
-  if (!user) {
+  console.log("[Server /project/[slugId]] getAuthServer user:", user);
+
+  if (!user || Object.keys(user).length === 0) {
     redirect('/');
   }
 
