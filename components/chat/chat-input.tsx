@@ -93,9 +93,7 @@ const ChatInput = ({
 
       <PromptInput
         globalDrop
-        className="rounded-xl! shadow-md bg-background
-         border
-        "
+        className="rounded-xl! shadow-md bg-background border border-dashed border-border/70 hover:border-solid hover:border-primary/50 transition-colors"
         onSubmit={handleSubmit}
       >
         {selectedPage && (
@@ -178,7 +176,7 @@ const StopButton = ({ onStop }: { onStop: () => void }) => {
   return (
     <Button
       size="icon"
-      className="!bg-muted rounded-full dark:!bg-black
+      className="bg-muted! rounded-full dark:bg-black!
       border cursor-pointer"
       onClick={onStop}
     >

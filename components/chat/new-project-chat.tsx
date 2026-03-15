@@ -1,10 +1,14 @@
 import { ChatStatus } from 'ai';
 import { motion } from "motion/react"
 import { PromptInputMessage } from '../ai-elements/prompt-input';
-import { Suggestion, Suggestions } from '../ai-elements/suggestion';
 import ChatInput from './chat-input';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const Grainient = dynamic(() => import('../Grainient'), { ssr: false });
+const MagicRings = dynamic(() => import('../MagicRings'), { ssr: false });
+const ColorBends = dynamic(() => import('../ColorBends'), { ssr: false });
 
 type PropsType = {
   input: string;
@@ -23,7 +27,6 @@ const NewProjectChat = ({
   onStop,
   onSubmit
 }: PropsType) => {
-
 
   const suggestions = [
     {
@@ -58,99 +61,134 @@ const NewProjectChat = ({
       label: "Neobank Website",
       value: "A modern neobank marketing website. Confident hero with app preview, trust metrics row showing '2M+ users', '$4.2B processed', debit card showcase section, feature breakdown grid, comparison table vs traditional banks, testimonials, and strong sign-up CTA."
     },
-    //  {
-    //     label: "Finance Dashboard",
-    //     value: "A high-fidelity, neo-brutalist financial dashboard. The style features sharp corners, thick solid black borders (border-2 border-black), and stark color blocking. The layout consists of a dark charcoal left sidebar, a wide middle section, and a right sidebar. The middle section is split horizontally: the top half has a beige/cream background containing a massive balance, solid black buttons, and two brutalist stat cards (one pastel blue, one pastel yellow) with hard black drop shadows. The bottom half is pure white, featuring a sharp, straight-line SVG chart with a solid black line and a secondary muted blue line over dashed gridlines. The right sidebar is pure white, featuring an overlapping, rotated 'credit card stack' illustration (black and pale pink), a 'Current Account' balance, and a transaction list where avatars have solid black borders."
-    // },
-
-    // {
-    //     label: "Hyper-Modern Fintech",
-    //     value: "The 'Titan Wealth' dashboard. A 'Glassmorphism' masterclass with blurred backdrop filters and glowing neon-blue data lines. Features a 3D rotating globe for 'Global Assets', modular frosted-glass cards for crypto-wallets, and a sleek, dark-mode 'Command Bar' for instant transactions."
-    // },
-    // {
-    //     label: "Healthcare Landing",
-    //     value: "A premium landing page for 'Helix AI', a healthcare diagnostics platform. Clinical white background with soft violet accents. Hero with 3D DNA visual, bento grid research nodes, trust badges showing '99.8% Accuracy', '2.4M+ Diagnoses', feature sections, and a sticky frosted header."
-    // },
   ];
-
 
   const handleSuggestionClick = (value: string) => {
     setInput(value);
   };
 
   return (
-    <div className="w-full relative min-h-screen">
+    <div className="w-full relative min-h-screen bg-background overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-0 left-0 w-full h-[600px] overflow-hidden pointer-events-none -z-10 opacity-60 dark:opacity-40">
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-linear-to-t from-background to-transparent z-10" />
+        <Grainient
+          timeSpeed={0.15}
+          color1="#3b15ff"
+          color2="#fc42ff"
+          color3="#000000"
+          zoom={1.5}
+          className="w-full h-full"
+        />
+      </div>
+
       <div className="w-full max-w-7xl mx-auto">
-        <div className="flex flex-col items-center justify-center
-         px-4 pt-20
-        ">
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className='font-serif text-4xl sm:text-5xl
-            md:text-6xl xl:text-7xl text-center mb-4
-            tracking-tight
-            '
-          >
-            Design your website with AI
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className='text-muted-foreground text-lg mb-4 text-center
-            max-w-lg
-            '
-          >
-            Describe your vision, and watch Wireframe.ai transform
-            your ideas into a stunning web design.
-          </motion.p>
+        <div className="flex flex-col items-center justify-center px-4 pt-24 pb-12">
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className='w-full max-w-2xl mb-4'
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="relative flex flex-col items-center justify-center space-y-4 text-center mb-12 w-full pt-8 pb-4"
           >
-            <ChatInput
-              input={input}
-              isLoading={isLoading}
-              status={status}
-              setInput={setInput}
-              onStop={onStop}
-              onSubmit={onSubmit}
-            />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] sm:w-[150%] max-w-[1200px] h-[300%] pointer-events-none -z-10 opacity-60 mix-blend-screen">
+              <MagicRings
+                color="#fc42ff"
+                colorTwo="#42fcff"
+                ringCount={6}
+                speed={1}
+                attenuation={10}
+                lineThickness={2}
+                baseRadius={0.35}
+                radiusStep={0.1}
+                scaleRate={0.1}
+                opacity={1}
+                blur={0}
+                noiseAmount={0.1}
+                rotation={0}
+                ringGap={1.5}
+                fadeIn={0.7}
+                fadeOut={0.5}
+                followMouse={false}
+                mouseInfluence={0.2}
+                hoverScale={1.2}
+                parallax={0.05}
+                clickBurst={false}
+              />
+            </div>
+
+            <div className="inline-flex items-center rounded-full border border-dashed border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4 shadow-[0_0_20px_rgba(var(--primary),0.15)] backdrop-blur-md">
+              ✨ Design anything with AI
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-b from-foreground via-foreground/90 to-muted-foreground max-w-4xl mx-auto leading-[1.1] pb-2">
+              What are we building today?
+            </h1>
+
+            <p className="max-w-xl text-lg sm:text-xl text-muted-foreground mt-4 font-medium">
+              Describe your vision, and watch <span className="text-foreground font-semibold">Wireframe.ai</span> generate production-ready code in seconds.
+            </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className='w-full max-w-3xl'
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className="relative w-full max-w-3xl mb-16"
           >
-            <Suggestions className="justify-center flex-wrap">
-              {suggestions.map((item) => (
-                <Suggestion
+            <div className="shadow-[0_0_50px_-15px_rgba(0,0,0,0.15)] dark:shadow-[0_0_50px_-15px_rgba(255,255,255,0.05)] rounded-2xl bg-background/80 backdrop-blur-xl border border-dashed border-border/50 transition-all hover:border-solid hover:border-border/80 group">
+              <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <ChatInput
+                input={input}
+                isLoading={isLoading}
+                status={status}
+                setInput={setInput}
+                onStop={onStop}
+                onSubmit={onSubmit}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="w-full max-w-[1200px]"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 px-4">
+              {suggestions.slice(0, 4).map((item, index) => (
+                <motion.div
                   key={item.label}
-                  className="font-normal"
-                  suggestion={item.value}
-                  onClick={() => handleSuggestionClick(item.value)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + (index * 0.05) }}
+                  className="h-full"
                 >
-                  {item.label}
-                </Suggestion>
+                  <button
+                    type="button"
+                    onClick={() => handleSuggestionClick(item.value)}
+                    className="w-full h-full flex flex-col items-start justify-start p-6 text-left transition-all duration-300 border border-dashed border-border/60 bg-card/20 hover:bg-linear-to-br hover:from-primary/10 hover:to-transparent hover:border-solid hover:border-primary/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.05)] hover:-translate-y-1 rounded-2xl cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <div className="flex items-center justify-between w-full mb-3">
+                      <span className="font-semibold text-foreground group-hover:text-primary transition-colors">{item.label}</span>
+                      <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                        →
+                      </div>
+                    </div>
+                    <span className="text-sm text-muted-foreground line-clamp-3 leading-relaxed font-medium">
+                      {item.value}
+                    </span>
+                  </button>
+                </motion.div>
               ))}
-            </Suggestions>
-
+            </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className='flex justify-center w-full max-w-3xl mx-auto'
+            transition={{ delay: 0.7 }}
+            className="w-full max-w-[1200px] mt-12 mb-8"
           >
             <ProjectGrid />
           </motion.div>
@@ -183,26 +221,42 @@ const ProjectGrid = () => {
     return null
   }
   return (
-    <div className="w-full mx-auto pt-8 px-8">
-      <h5 className="text-sm font-medium text-muted-foreground mb-4 px-2">
-        Recent Projects
-      </h5>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4
-       xl:grid-cols-5 gap-4
-      '>
+    <div className="w-full mx-auto px-4 md:px-8">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold text-foreground tracking-tight">
+          Recent Projects
+        </h3>
+        <div className="h-px flex-1 bg-border/50 mx-4" />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
         {projects?.map((project) => (
           <Link key={project.id} href={`/project/${project.slugId}`}
-            className="group flex flex-col gap-2 transition-all">
-            <div className='aspect-4/3 rounded-xl bg-muted overflow-hidden relative border border-border group-hover:border-primary'>
+            className="group flex flex-col gap-3 transition-all">
+            <div className="aspect-4/3 rounded-2xl bg-muted/20 overflow-hidden relative border border-dashed border-border/60 group-hover:border-solid group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] transition-all duration-300">
 
-              <div className="absolute inset-0 bg-linear-to-br from-primary/5
-        to-primary/20" />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+                {/* @ts-expect-error ColorBends is untyped JSX and TS infers colors as never[] */}
+                <ColorBends
+                  colors={['#3b15ff', '#fc42ff', '#000000']}
+                  speed={0.5}
+                  frequency={2}
+                  autoRotate={10}
+                  className="w-full h-full"
+                />
+              </div>
+
+              <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity z-10" />
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className='text-xs'>{project.title.charAt(0)}</span>
+                <span className="text-2xl font-bold text-muted-foreground/40 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-300">
+                  {project.title.charAt(0).toUpperCase()}
+                </span>
               </div>
             </div>
-            <h4 className="textsm font-medium truncate px-1">{project.title}</h4>
+            <h4 className="text-sm font-medium truncate px-1 text-foreground/80 group-hover:text-foreground transition-colors">
+              {project.title}
+            </h4>
           </Link>
         ))}
       </div>
@@ -210,16 +264,14 @@ const ProjectGrid = () => {
   )
 }
 
-
 const ProjectGridSkeleton = () => (
-  <div
-    className="w-full  mx-auto mt-4 px-12 animate-pulse">
-    <div className="h-4 w-32 bg-muted rounded mb-4 ml-2" />
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+  <div className="w-full mx-auto px-4 md:px-8 animate-pulse">
+    <div className="h-6 w-40 bg-muted/60 rounded-md mb-6" />
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex flex-col gap-2">
-          <div className="aspect-4/3 rounded-xl bg-muted border border-border" />
-          <div className="h-4 w-20 bg-muted rounded mx-1" />
+        <div key={i} className="flex flex-col gap-3">
+          <div className="aspect-4/3 rounded-2xl bg-muted/20 border border-dashed border-border/50" />
+          <div className="h-4 w-24 bg-muted/40 rounded-sm mx-1" />
         </div>
       ))}
     </div>
