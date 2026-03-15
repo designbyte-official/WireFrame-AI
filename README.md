@@ -31,7 +31,10 @@ Wireframe.ai.ai is an open-source AI-powered Web Design Agent. Generate web land
    * `google/gemini-2.5-pro`
    * `google/gemini-3.1-pro-preview`
    * `google/gemini-2.5-flash-lite`
-5. Refer to setup documentation to see how to create tables.
+5. Set up the Database:
+   * Navigate to the **SQL Editor** in your Insforge dashboard.
+   * Open the `schema.sql` file provided in this repository.
+   * Paste the contents into the SQL Editor and click **Run** to create the required tables (`projects`, `pages`, `messages`) and Row Level Security policies.
 
 ---
 

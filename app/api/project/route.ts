@@ -11,6 +11,27 @@ class AbortError extends Error {
   }
 }
 
+async function callAIWithRetry(apiCallFunc: () => Promise<any>, maxRetries = 3) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      return await apiCallFunc();
+    } catch (error: any) {
+      attempt++;
+      // Check if it's a 504 or 500 error, or generic request failure from down network
+      if (
+        attempt >= maxRetries || 
+        (error?.statusCode !== 504 && error?.statusCode !== 500 && error?.name !== 'TimeoutError')
+      ) {
+        throw error;
+      }
+      
+      const delayMs = attempt * 2000; // 2s, 4s, 6s...
+      console.log(`[AI Retry ${attempt}/${maxRetries}] Failed with ${error?.statusCode || 'timeout'}. Retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+}
 
 export async function GET() {
   try {
@@ -111,7 +132,7 @@ async function runGenerationWorker({
       ? generationPages.slice(-2).map((p) => `<!--${p.name}-->\n${p.htmlContent}`).join('\n\n')
       : "No previous pages";
 
-    const result = await insforge.ai.chat.completions.create({
+    const result = await callAIWithRetry(() => insforge.ai.chat.completions.create({
       model: 'google/gemini-3.1-pro-preview',
       messages: [
         {
@@ -155,7 +176,7 @@ ${page.rootStyles}
       ],
       webSearch: { enabled: false },
       maxTokens: 30000
-    })
+    }));
 
     let htmlContent = result.choices[0].message.content ?? ""
     const match = htmlContent.match(/<div[\s\S]*<\/div>/);
@@ -209,7 +230,7 @@ ${page.rootStyles}
     }))
   }, { id: "gen-card" })
 
-  const summaryResult = await insforge.ai.chat.completions.create({
+  const summaryResult = await callAIWithRetry(() => insforge.ai.chat.completions.create({
     model: 'google/gemini-2.5-flash-lite',
     messages: [
       {
@@ -225,7 +246,7 @@ Write 1-2 sentences in first person. Natural, confident. No questions. No "let m
     ],
     stream: true,
     webSearch: { enabled: false }
-  })
+  }));
 
   const summaryId = generateId();
   let fullSummaryText = "";
@@ -300,7 +321,7 @@ async function runRegenerateWorker({
     }
   }, { id: "gen-card" })
 
-  const result = await insforge.ai.chat.completions.create({
+  const result = await callAIWithRetry(() => insforge.ai.chat.completions.create({
     model: "google/gemini-3-flash-preview",
     messages: [
       {
@@ -322,7 +343,7 @@ async function runRegenerateWorker({
     ],
     webSearch: { enabled: false },
     maxTokens: 28000
-  });
+  }));
 
   let htmlContent = result.choices[0].message.content ?? '';
   const match = htmlContent.match(/<div[\s\S]*<\/div>/);
@@ -360,7 +381,7 @@ async function runRegenerateWorker({
   }, { id: "gen-card" })
 
 
-  const summaryResult = await insforge.ai.chat.completions.create({
+  const summaryResult = await callAIWithRetry(() => insforge.ai.chat.completions.create({
     model: 'google/gemini-2.5-flash-lite',
     messages: [
       {
@@ -376,7 +397,7 @@ Write 1-2 sentences in first person. Natural, confident. No questions. No "let m
     ],
     stream: true,
     webSearch: { enabled: false }
-  })
+  }));
 
   const summaryId = generateId();
   let fullSummaryText = "";
@@ -524,7 +545,7 @@ export async function POST(request: NextRequest) {
             // })
 
             checkAbort();
-            const result = await insforge.ai.chat.completions.create({
+            const result = await callAIWithRetry(() => insforge.ai.chat.completions.create({
               model: 'anthropic/claude-sonnet-4.5',
               messages: [
                 {
@@ -536,7 +557,7 @@ export async function POST(request: NextRequest) {
                   content: `${latestUserMessage}\nCLASSIFY THE INTENT NOW. ONE WORD ONLY`
                 }
               ]
-            })
+            }));
 
             const classify_output = (result.choices[0].message.content).trim().toLowerCase();
 
@@ -549,7 +570,7 @@ export async function POST(request: NextRequest) {
 
             // CLASSIFICATION MATCHES CHAT
             if (classification.intent === "chat") {
-              const chatResult = await insforge.ai.chat.completions.create({
+              const chatResult = await callAIWithRetry(() => insforge.ai.chat.completions.create({
                 model: "google/gemini-2.5-pro",
                 messages: [
                   {
@@ -560,7 +581,7 @@ export async function POST(request: NextRequest) {
                 ],
                 stream: true,
                 webSearch: { enabled: false }
-              })
+              }));
 
               const chatId = generateId();
               let chatText = "";
@@ -609,7 +630,7 @@ export async function POST(request: NextRequest) {
 
             genCardEmitted = true
 
-            const analysisResult = await insforge.ai.chat.completions.create({
+            const analysisResult = await callAIWithRetry(() => insforge.ai.chat.completions.create({
               model: 'anthropic/claude-sonnet-4.5',
               messages: [
                 {
@@ -643,7 +664,7 @@ export async function POST(request: NextRequest) {
                 }
               ],
               maxTokens: 28000,
-            });
+            }));
 
             checkAbort();
 
@@ -700,7 +721,10 @@ export async function POST(request: NextRequest) {
 
           emit(writer, 'generation', { status: 'error' }, { id: 'gen-card' });
 
-          writer.write({ type: "error", errorText: "Something went wrong" })
+          writer.write({ 
+            type: "error", 
+            errorText: "The AI provider took too long to respond or failed. Please wait a moment and try your prompt again." 
+          })
         }
       }
     })

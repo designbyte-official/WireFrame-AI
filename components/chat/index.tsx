@@ -231,32 +231,31 @@ const ChatInterface = ({
 
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
-      <div className="flex relative w-full max-w-md border-r
-      border-border
+    <div className="flex flex-col md:flex-row h-dvh w-full overflow-hidden">
+      <div className="flex relative w-full md:w-[450px] md:max-w-md border-b md:border-b-0 md:border-r
+      border-border h-1/2 md:h-full shrink-0
       ">
         {/* {ProjectTitle} */}
-        <div className="w-full absolute left-0 top-0 z-10 pb-2
-        bg-background
-        ">
+        <div className="w-full absolute left-0 top-0 z-10 pb-2 bg-background/80 backdrop-blur-sm">
           <div role="button"
-            className="flex items-center gap-2 cursor-pointer!"
+            className="flex items-center gap-2 cursor-pointer p-2"
             onClick={handleBack}
           >
             <Button variant="secondary"
               size="icon"
+              className="h-8 w-8"
             >
-              <ArrowLeft />
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <h5 className="font-semibold tracking-tight
-            truncate pr-4">
+            truncate pr-4 text-sm md:text-base">
               {projectTitle || projectData?.title || "Untitled Project"}
             </h5>
           </div>
         </div>
 
         <ChatPanel
-          className="h-full pt-8"
+          className="h-full pt-12 md:pt-14"
           messages={messages}
           input={input}
           setInput={setInput}
@@ -270,7 +269,7 @@ const ChatInterface = ({
         />
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 h-1/2 md:h-full overflow-hidden bg-muted/20">
         <Canvas
           pages={pages}
           setPages={setPages}
